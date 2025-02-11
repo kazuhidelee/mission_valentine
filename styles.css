@@ -1,0 +1,63 @@
+body { 
+    margin: 0; 
+    overflow: hidden; 
+    font-family: Arial, sans-serif; 
+    text-align: center;
+    background-color: black;
+}
+
+#game-container {
+    width: 640px;
+    height: 576px;
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+    background-image: url('./img/grass_land.png'); 
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated;
+}
+
+.player {
+    width: 112px;
+    height: 180px;
+    image-rendering: pixelated;
+    background-image: url('./img/jonah.png'); 
+    position: absolute;
+    background-size: cover; 
+    background-position: center;
+}
+
+.arrow {
+    width: 103px;
+    height: 29px;
+    position: absolute;
+    background-image: url('./img/arrow.png'); 
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated;
+}
+
+.item {
+    width: 20px;
+    height: 20px;
+    background: gold;
+    position: absolute;
+    border-radius: 50%;
+}
+
+#stats {
+    color: white;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+#buttons {
+    margin: 10px;
+}
+
+button {
+    padding: 10px;
+    font-size: 16px;
+    margin: 5px;
+}
