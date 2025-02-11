@@ -6,7 +6,41 @@ body {
     background-color: black;
 }
 
+#start-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    z-index: 10;
+}
+
+#game-over-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    z-index: 10;
+    display: none; /* Hide until game ends */
+}
+
+
+
 #game-container {
+    display: none;
     width: 640px;
     height: 576px;
     position: relative;
@@ -39,11 +73,13 @@ body {
 }
 
 .item {
-    width: 20px;
-    height: 20px;
-    background: gold;
+    width: 60px;
+    height: 60px;
+    background-image: url('./img/bao.png'); 
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated;
     position: absolute;
-    border-radius: 50%;
 }
 
 #stats {

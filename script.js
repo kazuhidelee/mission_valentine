@@ -1,9 +1,21 @@
 const gameContainer = document.getElementById("game-container");
-const player = document.getElementById("player");
+let player = document.getElementById("player"); // Change `const` to `let`
 const itemCountDisplay = document.getElementById("item-count");
 const hitCountDisplay = document.getElementById("hit-count");
 const startBtn = document.getElementById("start-btn");
 const pauseBtn = document.getElementById("pause-btn");
+const gameOverScreen = document.getElementById("game-over-screen");
+const replayButton = document.getElementById("replay-button");
+const gameOverMessage = document.getElementById("game-over-message");
+const gameOverMessages = [
+    "Ummm... maybe try harder next time?",
+    "Maybe you are not worthy of the prince's love...",
+    "Boy... you suck!",
+    "Plz BFFR, try again!",
+    "I don't date losers... you better try again 🙄",
+    "Hmmm... I know you can do better than that!",
+];
+
 
 let playerX = 100, playerY = 100, speed = 5;
 let itemsCollected = 0, hitsTaken = 0;
@@ -13,6 +25,11 @@ let gameIntervals = [];
 
 document.addEventListener("keydown", (e) => keys[e.key] = true);
 document.addEventListener("keyup", (e) => keys[e.key] = false);
+document.getElementById("start-button").addEventListener("click", function() {
+    document.getElementById("start-screen").style.display = "none"; // Hide start screen
+    document.getElementById("game-container").style.display = "block"; // Show game
+    startGame(); // Call the function to start the game
+});
 
 function movePlayer() {
     if (!gameRunning) return;
@@ -127,17 +144,53 @@ function collision(obj1, obj2) {
 }
 
 function checkGameOver() {
+    console.log("Checking game over..."); // Debugging log
     if (hitsTaken >= 3) {
-        alert("Game Over! You got hit 3 times.");
-        resetGame();
-    } else if (itemsCollected >= 30) {
-        alert("Congratulations! You collected 30 items.");
-        resetGame();
+        console.log("Game Over! You got hit 3 times."); // Debugging log
+		const randomIndex = Math.floor(Math.random() * gameOverMessages.length);
+		gameOverMessage.textContent = gameOverMessages[randomIndex];
+        endGame();
+    } else if (itemsCollected >= 5) {
+        console.log("Congratulations! You collected 5 items!"); // Debugging log
+        gameOverMessage.textContent = "Congratulations! You save 5 dumplings!";
+        endGame();
     }
 }
 
+function endGame() {
+    console.log("Ending game..."); // Debugging log
+    gameRunning = false; 
+    gameOverScreen.style.display = "flex"; // Show end screen
+	gameContainer.style.display = "none";
+    console.log("Game Over Screen Display:", gameOverScreen.style.display); // Debugging log
+    gameIntervals.forEach(clearInterval);
+    gameIntervals = []; // Clear the intervals array
+}
+
+function resetGame() {
+    console.log("Resetting game..."); // Debugging log
+    gameOverScreen.style.display = "none"; // Hide end screen
+    gameContainer.style.display = "flex"; // Show game container
+    itemsCollected = 0;
+    hitsTaken = 0;
+    itemCountDisplay.textContent = 0;
+    hitCountDisplay.textContent = 0;
+    playerX = 100;
+    playerY = 100;
+    gameContainer.innerHTML = `<div id="player" class="player"></div>`;
+    player = document.getElementById("player"); // Reinitialize the player element
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+    gameIntervals = [];
+    keys = {}; // Reset the keys object
+    gameRunning = false; // Ensure the game is properly reset
+    startGame();
+}
+replayButton.addEventListener("click", resetGame);
+
 function startGame() {
     if (gameRunning) return;
+    console.log("Starting game..."); // Debugging log
     gameRunning = true;
     startBtn.disabled = true;
     pauseBtn.disabled = false;
@@ -150,26 +203,6 @@ function startGame() {
 function pauseGame() {
     gameRunning = !gameRunning;
     pauseBtn.textContent = gameRunning ? "Pause" : "Resume";
-}
-
-function resetGame() {
-    gameRunning = false;
-    startBtn.disabled = false;
-    pauseBtn.disabled = true;
-    pauseBtn.textContent = "Pause";
-    itemsCollected = 0;
-    hitsTaken = 0;
-    itemCountDisplay.textContent = 0;
-    hitCountDisplay.textContent = 0;
-
-    gameContainer.innerHTML = `<div id="player" class="player"></div>`;
-    playerX = 100;
-    playerY = 100;
-    player.style.left = playerX + "px";
-    player.style.top = playerY + "px";
-
-    gameIntervals.forEach(clearInterval);
-    gameIntervals = [];
 }
 
 startBtn.addEventListener("click", startGame);
