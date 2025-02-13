@@ -82,8 +82,8 @@ body {
 
 #stats {
     color: white;
-    margin-top: 10px;
-    font-size: 20px;
+    font-size: 30px;
+    position: relative;
 }
 
 #buttons {
@@ -172,4 +172,18 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+}
+
+#hit-count .heart {
+    width: 25px; /* Adjust size as needed */
+    height: 25px; /* Adjust size as needed */
+    margin: 0 2px; /* Spacing between hearts */
+    image-rendering: pixelated;
+}
+
+.bao{
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    image-rendering: pixelated;  
+    margin-top: 10px;
 }

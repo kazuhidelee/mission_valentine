@@ -21,7 +21,7 @@ const gameOverMessages = [
 
 const dialogueSequence = [
     "Well hello brave adventurer!",
-    "I see that you have successfully saved my soup dumpling fairies and returned them home.",
+    "I see that you have successfully saved my soup dumpling fairies and they have showed you the way here.",
     "I am so grateful for your help, hence I shall reward you!",
     "But before that... I do have a request again",
     "You see, I have been ruling the dumpling kingdom by myself for centries now...",
@@ -123,8 +123,9 @@ function spawnArrow() {
         arrow.style.top = (currentY + directionY * 6) + "px";
 
         if (collision(player, arrow)) {
+            decrementHearts();
             hitsTaken++;
-            hitCountDisplay.textContent = hitsTaken;
+            // hitCountDisplay.textContent = hitsTaken;
             gameContainer.removeChild(arrow);
             clearInterval(arrowInterval);
             checkGameOver();
@@ -137,6 +138,22 @@ function spawnArrow() {
     }, 30);
 
     gameIntervals.push(arrowInterval);
+}
+
+function decrementHearts() {
+    const hearts = document.querySelectorAll("#hit-count .heart");
+    if (hearts.length > 0) {
+        hearts[hearts.length - 1].remove(); // Remove the last heart
+    }
+}
+
+function resetHearts() {
+    const hitCount = document.getElementById("hit-count");
+    hitCount.innerHTML = `
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+    `;
 }
 
 function spawnItem() {
@@ -223,7 +240,7 @@ function transitionToSecondGameScreen() {
     gameRunning = false;
     gameContainer.style.display = "none";
     secondGameScreen.style.display = "block";
-
+    player.style.backgroundImage = "url('./img/jonah_w_bao.png')";
     // Move player and prince to the second game screen
     console.log(prince)
     secondGameScreen.appendChild(player);
@@ -314,6 +331,7 @@ function resetGame() {
     gameOverScreen.style.display = "none"; // Hide end screen
     gameContainer.style.display = "flex"; // Show game container
     secondGameScreen.style.display = "none"; // Hide second game screen
+    player.style.backgroundImage = "url('./img/jonah')";
     itemsCollected = 0;
     hitsTaken = 0;
     itemCountDisplay.textContent = 0;
@@ -342,7 +360,7 @@ function resetGame() {
     gameIntervals.forEach(clearInterval);
     gameIntervals = [];
     keys = {};
-
+    resetHearts();
     // Ensure the game is properly reset
     gameRunning = false;
     startGame();
