@@ -1,7 +1,7 @@
 body { 
     margin: 0; 
     overflow: hidden; 
-    font-family: Arial, sans-serif; 
+    font-family: "Pixelify Sans", serif;
     text-align: center;
     background-color: black;
 }
@@ -36,8 +36,6 @@ body {
     z-index: 10;
     display: none; /* Hide until game ends */
 }
-
-
 
 #game-container {
     display: none;
@@ -93,7 +91,85 @@ body {
 }
 
 button {
+    font-family: "Pixelify Sans", serif;
     padding: 10px;
     font-size: 16px;
     margin: 5px;
+}
+
+
+#second-game-screen {
+    display: none;
+    width: 640px;
+    height: 576px;
+    position: relative;
+    margin: auto;
+    overflow: hidden;
+    background-image: url('./img/cherry_blossom.png'); 
+
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated; 
+}
+
+.portal {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background-image: url('./img/portal.png'); 
+    position: absolute;
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 2s ease-in-out;
+}
+
+.prince {
+    display: none;
+    width: 190px;
+    height: 210px;
+    background-image: url('./img/prince.png'); 
+    position: absolute;
+    background-size: cover; 
+    background-position: center;
+    image-rendering: pixelated;
+    transform: translate(-50%, -50%);
+    top: 25%;
+    left: 50%;
+}
+
+.dialog {
+    display: none;
+    color: white;
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+.dialog {
+    display: none; /* Initially hidden */
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+#dialog-text {
+    color : black;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#next-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
 }

@@ -3,21 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dodging Game</title>
+    <title>Mission: Valentine</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patua+One&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="stats">Items: <span id="item-count">0</span> | Hits: <span id="hit-count">0</span></div>
     <div id="buttons">
-        <button id="start-btn">Start</button>
+        <!-- <button id="start-button">Start</button> -->
         <button id="pause-btn" disabled>Pause</button>
     </div>
     <div id="start-screen">
-        <h1>Save the soup dumplings and return them to the prince</h1>
+        <h1>Save the soup dumpling fairies and return them to the prince</h1>
         <button id="start-button">Start Game</button>
     </div>
     <div id="game-container">
         <div id="player" class="player"></div>
+        <div id="portal" class="portal"></div>
+        <div id="prince" class="prince"></div>
+    </div>
+    <div id="second-game-screen">
+    </div>
+    <div id="dialog" class="dialog">
+        <p id="dialog-text"></p> 
+        <button id="next-button">Next</button> 
     </div>
     <div id="game-over-screen">
         <h1 id="game-over-message"></h1>

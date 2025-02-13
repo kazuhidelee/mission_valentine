@@ -1,8 +1,11 @@
 const gameContainer = document.getElementById("game-container");
 let player = document.getElementById("player"); // Change `const` to `let`
+let portal = document.getElementById("portal"); 
+let prince = document.getElementById("prince"); 
+let secondGameScreen = document.getElementById("second-game-screen"); 
 const itemCountDisplay = document.getElementById("item-count");
 const hitCountDisplay = document.getElementById("hit-count");
-const startBtn = document.getElementById("start-btn");
+const startBtn = document.getElementById("start-button");
 const pauseBtn = document.getElementById("pause-btn");
 const gameOverScreen = document.getElementById("game-over-screen");
 const replayButton = document.getElementById("replay-button");
@@ -16,6 +19,20 @@ const gameOverMessages = [
     "Hmmm... I know you can do better than that!",
 ];
 
+const dialogueSequence = [
+    "Well hello brave adventurer!",
+    "I see that you have successfully saved my soup dumpling fairies and returned them home.",
+    "I am so grateful for your help, hence I shall reward you!",
+    "But before that... I do have a request again",
+    "You see, I have been ruling the dumpling kingdom by myself for centries now...",
+    "And I've been waiting for someone who can accompany me in my kingdom.",
+    "Someone who is brave, cute, and most importantly, someone who has a nice ass.",
+    "Oh! Umm... I mean nice personality hehe",
+    "Soo... I have a question for you...",
+    "Will you be my valentine?",
+];
+
+let currentDialogueIndex = 0;
 
 let playerX = 100, playerY = 100, speed = 5;
 let itemsCollected = 0, hitsTaken = 0;
@@ -30,16 +47,23 @@ document.getElementById("start-button").addEventListener("click", function() {
     document.getElementById("game-container").style.display = "block"; // Show game
     startGame(); // Call the function to start the game
 });
+document.addEventListener("DOMContentLoaded", () => {
+    secondGameScreen = document.getElementById("second-game-screen");
+    circle = document.getElementById("circle");
+    dialog = document.getElementById("dialog");
+});
 
 function movePlayer() {
     if (!gameRunning) return;
-    if (keys["a"] && playerX > 0) playerX -= speed;
-    if (keys["d"] && playerX < 770) playerX += speed;
-    if (keys["w"] && playerY > 0) playerY -= speed;
-    if (keys["s"] && playerY < 470) playerY += speed;
+    if ((keys["a"] || keys["ArrowLeft"]) && playerX > 0) playerX -= speed;
+    if ((keys["d"] || keys["ArrowRight"]) && playerX < 770) playerX += speed;
+    if ((keys["w"] || keys["ArrowUp"]) && playerY > 0) playerY -= speed;
+    if ((keys["s"] || keys["ArrowDown"]) && playerY < 470) playerY += speed;
+    
     player.style.left = playerX + "px";
     player.style.top = playerY + "px";
 }
+
 
 function spawnArrow() {
     if (!gameRunning) return;
@@ -138,22 +162,140 @@ function spawnItem() {
 }
 
 function collision(obj1, obj2) {
-    let r1 = obj1.getBoundingClientRect();
-    let r2 = obj2.getBoundingClientRect();
-    return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+    const rect1 = obj1.getBoundingClientRect();
+    const rect2 = obj2.getBoundingClientRect();
+
+    return !(rect1.right < rect2.left || 
+             rect1.left > rect2.right || 
+             rect1.bottom < rect2.top || 
+             rect1.top > rect2.bottom);
 }
 
 function checkGameOver() {
     console.log("Checking game over..."); // Debugging log
     if (hitsTaken >= 3) {
         console.log("Game Over! You got hit 3 times."); // Debugging log
-		const randomIndex = Math.floor(Math.random() * gameOverMessages.length);
-		gameOverMessage.textContent = gameOverMessages[randomIndex];
+        const randomIndex = Math.floor(Math.random() * gameOverMessages.length);
+        gameOverMessage.textContent = gameOverMessages[randomIndex];
         endGame();
-    } else if (itemsCollected >= 5) {
-        console.log("Congratulations! You collected 5 items!"); // Debugging log
-        gameOverMessage.textContent = "Congratulations! You save 5 dumplings!";
-        endGame();
+    } else if (itemsCollected >= 3) {
+        console.log("Congratulations! You collected 3 items!"); // Debugging log
+        showPortal();
+    }
+}
+
+function showPortal() {
+    if (!portal) {
+        console.error("Portal element not found");
+        return;
+    }
+    console.log("Portal element appears");
+    portal.style.display = "block";
+    portal.style.transition = "opacity 2s"; // 2-second fade-in
+    portal.style.opacity = "1"; // Fully visible
+
+    // Start checking collision after fade-in is complete
+    setTimeout(() => {
+        const portalCollisionInterval = setInterval(() => {
+            if (collision(player, portal)) {
+                clearInterval(portalCollisionInterval); // Stop checking after collision
+                transitionToSecondGameScreen();
+            }
+        }, 20);
+        gameIntervals.push(portalCollisionInterval);
+    }, 2000); // Wait for fade-in transition (2s)
+}
+
+
+function checkPlayerPortalCollision() {
+    // const portal = document.getElementById("portal");
+    if (collision(player, portal)) {
+        transitionToSecondGameScreen();
+    }
+}
+
+function transitionToSecondGameScreen() {
+    if (!secondGameScreen) {
+        console.error("Second game screen element not found");
+        return;
+    }
+    console.log("Transitioning to second game screen");
+    gameRunning = false;
+    gameContainer.style.display = "none";
+    secondGameScreen.style.display = "block";
+
+    // Move player and prince to the second game screen
+    console.log(prince)
+    secondGameScreen.appendChild(player);
+    secondGameScreen.appendChild(prince); 
+    playerX = secondGameScreen.offsetWidth / 2;
+    playerY = secondGameScreen.offsetHeight * 0.9;
+
+    prince.style.display = "block";
+
+    gameIntervals.forEach(clearInterval); 
+    gameIntervals = []; 
+    gameRunning = true;
+    gameIntervals.push(setInterval(movePlayerInSecondScreen, 20));
+}
+
+
+function movePlayerInSecondScreen() {
+    if (!gameRunning) return;
+    if ((keys["a"] || keys["ArrowLeft"]) && playerX > 0) playerX -= speed;
+    if ((keys["d"] || keys["ArrowRight"]) && playerX < 770) playerX += speed;
+    if ((keys["w"] || keys["ArrowUp"]) && playerY > 0) playerY -= speed;
+    if ((keys["s"] || keys["ArrowDown"]) && playerY < 470) playerY += speed;
+
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
+
+    if (collision(player, prince)) {
+        showDialog();
+        gameRunning = false;
+    }
+}
+
+function showDialog() {
+    if (!dialog) {
+        console.error("Dialog element not found");
+        return;
+    }
+
+    // Reset the dialogue index
+    currentDialogueIndex = 0;
+
+    // Display the first message
+    console.log(dialogueSequence[currentDialogueIndex]);
+    dialog.querySelector("#dialog-text").textContent = dialogueSequence[currentDialogueIndex];
+    dialog.style.display = "block";
+
+    // Add event listener for the "Next" button
+    const nextButton = document.getElementById("next-button");
+    nextButton.addEventListener("click", handleNextDialogue);
+}
+
+function handleNextDialogue() {
+    currentDialogueIndex++;
+
+    if (currentDialogueIndex < dialogueSequence.length) {
+        // Display the next message
+        dialog.querySelector("#dialog-text").textContent = dialogueSequence[currentDialogueIndex];
+    } else {
+        // End of dialogue sequence
+        dialog.style.display = "none"; // Hide the dialogue box
+        askToPlayAgain(); // Ask if the user wants to play again
+    }
+}
+
+
+function askToPlayAgain() {
+    const playAgain = confirm("Do you want to play again?");
+    if (playAgain) {
+        resetGame(); // Reset the game if the user chooses to play again
+    } else {
+        // Optionally, you can redirect the user or display a "Thank you" message
+        alert("Thank you for playing!");
     }
 }
 
@@ -171,19 +313,38 @@ function resetGame() {
     console.log("Resetting game..."); // Debugging log
     gameOverScreen.style.display = "none"; // Hide end screen
     gameContainer.style.display = "flex"; // Show game container
+    secondGameScreen.style.display = "none"; // Hide second game screen
     itemsCollected = 0;
     hitsTaken = 0;
     itemCountDisplay.textContent = 0;
     hitCountDisplay.textContent = 0;
     playerX = 100;
     playerY = 100;
-    gameContainer.innerHTML = `<div id="player" class="player"></div>`;
-    player = document.getElementById("player"); // Reinitialize the player element
+    currentDialogueIndex = 0;
+    if (secondGameScreen.contains(player)) {
+        gameContainer.appendChild(player);
+    }
+    // Reset the game container's content
+    gameContainer.innerHTML = `
+        <div id="player" class="player"></div>
+        <div id="portal" class="portal" style="display: none;"></div>
+    `;
+
+    // Reinitialize the player and portal elements
+    player = document.getElementById("player");
+    portal = document.getElementById("portal");
+
+    // Reset player position
     player.style.left = playerX + "px";
     player.style.top = playerY + "px";
+
+    // Clear intervals and reset keys
+    gameIntervals.forEach(clearInterval);
     gameIntervals = [];
-    keys = {}; // Reset the keys object
-    gameRunning = false; // Ensure the game is properly reset
+    keys = {};
+
+    // Ensure the game is properly reset
+    gameRunning = false;
     startGame();
 }
 replayButton.addEventListener("click", resetGame);
