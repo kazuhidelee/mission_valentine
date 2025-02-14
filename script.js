@@ -3,6 +3,7 @@ let player = document.getElementById("player");
 let portal = document.getElementById("portal"); 
 let prince = document.getElementById("prince"); 
 // game screens
+let startScreen = document.getElementById("start-screen");
 const gameContainer = document.getElementById("game-container");
 let secondGameScreen = document.getElementById("second-game-screen"); 
 let yippeeScreen = document.getElementById("yippee-screen");
@@ -11,7 +12,7 @@ const gameOverScreen = document.getElementById("game-over-screen");
 const hitCountDisplay = document.getElementById("hit-count");
 const itemCountDisplay = document.getElementById("item-count");
 // buttons
-// const replayButtonYippee = document.getElementById("replay-button-yippee");
+const replayButtonYippee = document.getElementById("replay-button-yippee");
 const startBtn = document.getElementById("start-button");
 const pauseBtn = document.getElementById("pause-btn");
 const replayButton = document.getElementById("replay-button");
@@ -40,6 +41,14 @@ const dialogueSequence = [
     "*Cough* Umm... I mean nice personality hehe",
     "Soo... I have a question for you...",
     "Will you be my valentine?",
+];
+
+const jumpscares = [
+    "img/sideeye1.png",
+    "img/sideeye2.png",
+    "img/sideeye3.png",
+    "img/sideeye4.png",
+
 ];
 
 // varaibles
@@ -163,6 +172,8 @@ function resetHearts() {
         <img src="img/heart.png" class="heart" alt="Heart">
         <img src="img/heart.png" class="heart" alt="Heart">
         <img src="img/heart.png" class="heart" alt="Heart">
+        <img src="img/heart.png" class="heart" alt="Heart">
+        <img src="img/heart.png" class="heart" alt="Heart">
     `;
 }
 
@@ -200,8 +211,8 @@ function collision(obj1, obj2) {
 
 function checkGameOver() {
     console.log("Checking game over..."); // Debugging log
-    if (hitsTaken >= 3) {
-        console.log("Game Over! You got hit 3 times."); // Debugging log
+    if (hitsTaken >= 5) {
+        console.log("Game Over! You got hit 5 times."); // Debugging log
         const randomIndex = Math.floor(Math.random() * gameOverMessages.length);
         gameOverMessage.textContent = gameOverMessages[randomIndex];
         endGame();
@@ -328,40 +339,45 @@ function handleYes() {
     secondGameScreen.style.display = "none";
     // Show the "Yippee, reward awaits" screen
     yippeeScreen.style.display = "block";
-    const replayButtonYippee = document.getElementById("replay-button-yippee");
-    replayButtonYippee.addEventListener("click", resetGame);
 
 }
+replayButtonYippee.addEventListener("click", replay_from_end);
 
 function handleNo() {
     // Hide the dialogue box
     dialog.style.display = "none";
-
+ 
     // Show an image for 1 second
+    const randomIndex = Math.floor(Math.random() * jumpscares.length);
+    const Image_source = jumpscares[randomIndex];
     const noImage = document.createElement("img");
-    noImage.src = "img/heart.png"; // Replace with your image path
+    noImage.src = Image_source; // Replace with your image path
     noImage.style.position = "absolute";
     noImage.style.top = "50%";
     noImage.style.left = "50%";
     noImage.style.transform = "translate(-50%, -50%)";
     noImage.style.zIndex = "1000";
+    noImage.style.width = "500px"
+    noImage.style.height = "500px"
+    noImage.style.imageRendering = "pixelated";
+
+    // Add fade-out styles
+    noImage.style.transition = "opacity 1s";
+    noImage.style.opacity = "1";
+
     document.body.appendChild(noImage);
 
-    // Remove the image after 1 second
+    // Trigger the fade-out after a short delay
+    setTimeout(() => {
+        noImage.style.opacity = "0";
+    }, 500);
+
+    // Remove the image after the fade-out is complete
     setTimeout(() => {
         noImage.remove();
-    }, 1000);
-}
+    }, 1500);
 
-
-function askToPlayAgain() {
-    const playAgain = confirm("Do you want to play again?");
-    if (playAgain) {
-        resetGame(); // Reset the game if the user chooses to play again
-    } else {
-        // Optionally, you can redirect the user or display a "Thank you" message
-        alert("Thank you for playing!");
-    }
+    dialog.style.display = "block";
 }
 
 function endGame() {
@@ -375,59 +391,66 @@ function endGame() {
 }
 
 function resetGame() {
-    console.log("Resetting game..."); // Debugging log
-    gameOverScreen.style.display = "none"; // Hide end screen
-    gameContainer.style.display = "flex"; // Show game container
-    secondGameScreen.style.display = "none"; // Hide second game screen
-    dialog.style.display = "none"; // Hide dialogue box
-    yippeeScreen.style.display = "none"
-    player.style.backgroundImage = "url('./img/jonah')";
-    itemsCollected = 0;
-    hitsTaken = 0;
-    itemCountDisplay.textContent = 0;
-    hitCountDisplay.textContent = 0;
+    // Reset player position
     playerX = 100;
     playerY = 100;
-    currentDialogueIndex = 0;
-    if (secondGameScreen.contains(player)) {
-        console.log("Moving player back to game container"); // Debugging log
-        gameContainer.appendChild(player);
-    }
-
-    console.log("Clearing second game screen"); // Debugging log
-    secondGameScreen.innerHTML = "";
-    // Reset the game container's content
-    console.log("Resetting game container"); // Debugging log
-    gameContainer.innerHTML = `
-        <div id="player" class="player"></div>
-        <div id="portal" class="portal" style="display: none;"></div>
-    `;
-
-    // Reinitialize the player and portal elements
-    player = document.getElementById("player");
-    portal = document.getElementById("portal");
-
-    // Reset player position
     player.style.left = playerX + "px";
     player.style.top = playerY + "px";
 
-    // Clear intervals and reset keys
+    // Reset stats
+    itemsCollected = 0;
+    hitsTaken = 0;
+    itemCountDisplay.textContent = itemsCollected;
+    hitCountDisplay.textContent = hitsTaken;
+    resetHearts();
+
+    // Clear remaining arrows and items
+    document.querySelectorAll(".arrow").forEach(arrow => arrow.remove());
+    document.querySelectorAll(".item").forEach(item => item.remove());
+
+    // Clear all intervals
     gameIntervals.forEach(clearInterval);
     gameIntervals = [];
-    keys = {};
-    resetHearts();
-    // Ensure the game is properly reset
+
+    // Hide portal and reset its style
+    portal.style.display = "none";
+    portal.style.opacity = "0";
+
+    if (secondGameScreen.contains(player)) {
+        console.log("Moving player back to game container"); 
+        player.style.backgroundImage = "url('./img/jonah.png')";
+        gameContainer.appendChild(player);
+    }
+
+    // Hide all screens except start screen
+    gameContainer.style.display = "none";
+    secondGameScreen.style.display = "none";
+    yippeeScreen.style.display = "none";
+    gameOverScreen.style.display = "none";
+    yesButton.style.display = "none";
+    noButton.style.display = "none";
     gameRunning = false;
+}
+
+replayButton.addEventListener("click", replay);
+
+function replay_from_end(){
+    resetGame();
+    startScreen.style.display = "block";
+    startBtn.disabled = false;
+}
+function replay(){
+    resetGame();
+    gameContainer.style.display = "block";
     startGame();
 }
-replayButton.addEventListener("click", resetGame);
-
 function startGame() {
     if (gameRunning) return;
     console.log("Starting game..."); // Debugging log
     gameRunning = true;
     startBtn.disabled = true;
     pauseBtn.disabled = false;
+    startScreen.display = "none";
 
     gameIntervals.push(setInterval(movePlayer, 20));
     gameIntervals.push(setInterval(spawnArrow, 1500));

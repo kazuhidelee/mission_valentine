@@ -32,8 +32,7 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 24px;
-    z-index: 10;
+    font-size: 20px;
     display: none; /* Hide until game ends */
 }
 
@@ -224,6 +223,11 @@ button {
 
 #yippee-screen h1 {
     font-size: 32px;
+    margin-bottom: 20px;
+}
+
+#yippee-screen h2 {
+    font-size: 25px;
     margin-bottom: 20px;
 }
 
