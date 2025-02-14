@@ -1,14 +1,24 @@
-const gameContainer = document.getElementById("game-container");
-let player = document.getElementById("player"); // Change `const` to `let`
+// elements
+let player = document.getElementById("player");
 let portal = document.getElementById("portal"); 
 let prince = document.getElementById("prince"); 
+// game screens
+const gameContainer = document.getElementById("game-container");
 let secondGameScreen = document.getElementById("second-game-screen"); 
-const itemCountDisplay = document.getElementById("item-count");
+let yippeeScreen = document.getElementById("yippee-screen");
+const gameOverScreen = document.getElementById("game-over-screen");
+//stats
 const hitCountDisplay = document.getElementById("hit-count");
+const itemCountDisplay = document.getElementById("item-count");
+// buttons
+// const replayButtonYippee = document.getElementById("replay-button-yippee");
 const startBtn = document.getElementById("start-button");
 const pauseBtn = document.getElementById("pause-btn");
-const gameOverScreen = document.getElementById("game-over-screen");
 const replayButton = document.getElementById("replay-button");
+const yesButton = document.getElementById("yes-button");
+const noButton = document.getElementById("no-button");
+const nextButton = document.getElementById("next-button");
+// messages
 const gameOverMessage = document.getElementById("game-over-message");
 const gameOverMessages = [
     "Ummm... maybe try harder next time?",
@@ -27,13 +37,13 @@ const dialogueSequence = [
     "You see, I have been ruling the dumpling kingdom by myself for centries now...",
     "And I've been waiting for someone who can accompany me in my kingdom.",
     "Someone who is brave, cute, and most importantly, someone who has a nice ass.",
-    "Oh! Umm... I mean nice personality hehe",
+    "*Cough* Umm... I mean nice personality hehe",
     "Soo... I have a question for you...",
     "Will you be my valentine?",
 ];
 
+// varaibles
 let currentDialogueIndex = 0;
-
 let playerX = 100, playerY = 100, speed = 5;
 let itemsCollected = 0, hitsTaken = 0;
 let keys = {};
@@ -150,9 +160,9 @@ function decrementHearts() {
 function resetHearts() {
     const hitCount = document.getElementById("hit-count");
     hitCount.innerHTML = `
-        <span class="heart">❤️</span>
-        <span class="heart">❤️</span>
-        <span class="heart">❤️</span>
+        <img src="img/heart.png" class="heart" alt="Heart">
+        <img src="img/heart.png" class="heart" alt="Heart">
+        <img src="img/heart.png" class="heart" alt="Heart">
     `;
 }
 
@@ -281,14 +291,13 @@ function showDialog() {
 
     // Reset the dialogue index
     currentDialogueIndex = 0;
-
     // Display the first message
-    console.log(dialogueSequence[currentDialogueIndex]);
+    console.log("Showing dialogue:", dialogueSequence[currentDialogueIndex]);
     dialog.querySelector("#dialog-text").textContent = dialogueSequence[currentDialogueIndex];
     dialog.style.display = "block";
+    nextButton.style.display = "block";
 
     // Add event listener for the "Next" button
-    const nextButton = document.getElementById("next-button");
     nextButton.addEventListener("click", handleNextDialogue);
 }
 
@@ -298,11 +307,50 @@ function handleNextDialogue() {
     if (currentDialogueIndex < dialogueSequence.length) {
         // Display the next message
         dialog.querySelector("#dialog-text").textContent = dialogueSequence[currentDialogueIndex];
-    } else {
-        // End of dialogue sequence
-        dialog.style.display = "none"; // Hide the dialogue box
-        askToPlayAgain(); // Ask if the user wants to play again
+        if(currentDialogueIndex === dialogueSequence.length - 1){
+            console.log("in else if");
+            nextButton.style.display = "none";
+            yesButton.style.display = "block";
+            noButton.style.display = "block";
+        }
+
+    } else{
+        askToPlayAgain(); 
     }
+}
+
+yesButton.addEventListener("click", handleYes);
+noButton.addEventListener("click", handleNo);
+
+function handleYes() {
+    // Hide the dialogue box
+    dialog.style.display = "none";
+    secondGameScreen.style.display = "none";
+    // Show the "Yippee, reward awaits" screen
+    yippeeScreen.style.display = "block";
+    const replayButtonYippee = document.getElementById("replay-button-yippee");
+    replayButtonYippee.addEventListener("click", resetGame);
+
+}
+
+function handleNo() {
+    // Hide the dialogue box
+    dialog.style.display = "none";
+
+    // Show an image for 1 second
+    const noImage = document.createElement("img");
+    noImage.src = "img/heart.png"; // Replace with your image path
+    noImage.style.position = "absolute";
+    noImage.style.top = "50%";
+    noImage.style.left = "50%";
+    noImage.style.transform = "translate(-50%, -50%)";
+    noImage.style.zIndex = "1000";
+    document.body.appendChild(noImage);
+
+    // Remove the image after 1 second
+    setTimeout(() => {
+        noImage.remove();
+    }, 1000);
 }
 
 
@@ -331,6 +379,8 @@ function resetGame() {
     gameOverScreen.style.display = "none"; // Hide end screen
     gameContainer.style.display = "flex"; // Show game container
     secondGameScreen.style.display = "none"; // Hide second game screen
+    dialog.style.display = "none"; // Hide dialogue box
+    yippeeScreen.style.display = "none"
     player.style.backgroundImage = "url('./img/jonah')";
     itemsCollected = 0;
     hitsTaken = 0;
@@ -340,9 +390,14 @@ function resetGame() {
     playerY = 100;
     currentDialogueIndex = 0;
     if (secondGameScreen.contains(player)) {
+        console.log("Moving player back to game container"); // Debugging log
         gameContainer.appendChild(player);
     }
+
+    console.log("Clearing second game screen"); // Debugging log
+    secondGameScreen.innerHTML = "";
     // Reset the game container's content
+    console.log("Resetting game container"); // Debugging log
     gameContainer.innerHTML = `
         <div id="player" class="player"></div>
         <div id="portal" class="portal" style="display: none;"></div>

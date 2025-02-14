@@ -160,6 +160,11 @@ button {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     text-align: center;
+    width: 640px;
+    height: 70px;
+    background-size: cover; 
+    background-position: center;
+    z-index: 100;
 }
 
 #dialog-text {
@@ -172,6 +177,20 @@ button {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    display: none;
+    margin-left: 80%;
+}
+#yes-button{
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: none;
+}
+#no-button{
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: none;
 }
 
 #hit-count .heart {
@@ -186,4 +205,34 @@ button {
     height: 50px; /* Adjust size as needed */
     image-rendering: pixelated;  
     margin-top: 10px;
+}
+
+#yippee-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    display: none; /* Hide until game ends */
+}
+
+#yippee-screen h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+#replay-button-yippee {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 5px;
 }
