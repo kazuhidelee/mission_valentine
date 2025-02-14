@@ -35,7 +35,7 @@ const dialogueSequence = [
     "I see that you have successfully saved my soup dumpling fairies and they have showed you the way here.",
     "I am so grateful for your help, hence I shall reward you!",
     "But before that... I do have a request again",
-    "You see, I have been ruling the dumpling kingdom by myself for centries now...",
+    "You see, I have been ruling the dumpling kingdom by myself for centuries now...",
     "And I've been waiting for someone who can accompany me in my kingdom.",
     "Someone who is brave, cute, and most importantly, someone who has a nice ass.",
     "*Cough* Umm... I mean nice personality hehe",
