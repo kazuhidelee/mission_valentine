@@ -48,6 +48,8 @@ const jumpscares = [
     "img/sideeye2.png",
     "img/sideeye3.png",
     "img/sideeye4.png",
+    "img/sideeye5.png",
+    "img/sideeye6.png",
 
 ];
 
@@ -58,6 +60,7 @@ let itemsCollected = 0, hitsTaken = 0;
 let keys = {};
 let gameRunning = false;
 let gameIntervals = [];
+let dumplingcount = 0;
 
 document.addEventListener("keydown", (e) => keys[e.key] = true);
 document.addEventListener("keyup", (e) => keys[e.key] = false);
@@ -178,15 +181,25 @@ function resetHearts() {
 }
 
 function spawnItem() {
-    if (!gameRunning) return;
+    if (!gameRunning || dumplingcount >= 16) return; 
+    console.log("spawning dumpling")
     const item = document.createElement("div");
     item.classList.add("item");
-    item.style.left = Math.random() * 780 + "px";
-    item.style.top = Math.random() * 480 + "px";
-    gameContainer.appendChild(item);
 
+    const containerRect = gameContainer.getBoundingClientRect();
+    const itemSize = 60; 
+    const maxX = containerRect.width - itemSize;
+    const maxY = containerRect.height - itemSize;
+
+    item.style.left = Math.random() * maxX + "px";
+    item.style.top = Math.random() * maxY + "px";
+
+
+    gameContainer.appendChild(item);
+    dumplingcount++;
     let itemInterval = setInterval(() => {
         if (!gameRunning) return;
+        // if(dumplingcount >= 16) return;
         if (collision(player, item)) {
             itemsCollected++;
             itemCountDisplay.textContent = itemsCollected;
@@ -216,8 +229,8 @@ function checkGameOver() {
         const randomIndex = Math.floor(Math.random() * gameOverMessages.length);
         gameOverMessage.textContent = gameOverMessages[randomIndex];
         endGame();
-    } else if (itemsCollected >= 3) {
-        console.log("Congratulations! You collected 3 items!"); // Debugging log
+    } else if (itemsCollected >= 16) {
+        console.log("Congratulations! You saved all dumplings!"); // Debugging log
         showPortal();
     }
 }
@@ -228,7 +241,7 @@ function showPortal() {
         return;
     }
     console.log("Portal element appears");
-    portal.style.display = "block";
+    portal.style.display = "block"; 
     portal.style.transition = "opacity 2s"; // 2-second fade-in
     portal.style.opacity = "1"; // Fully visible
 
@@ -340,9 +353,47 @@ function handleYes() {
     // Show the "Yippee, reward awaits" screen
     yippeeScreen.style.display = "block";
 
+    spawnFloatingHearts();
+
 }
 replayButtonYippee.addEventListener("click", replay_from_end);
 
+function spawnFloatingHearts(count = 20) {
+    const container = document.getElementById("floating-hearts-container");
+    const containerRect = container.getBoundingClientRect();
+    const itemSize = 60; 
+    const maxX = containerRect.width - itemSize;
+    const maxY = containerRect.height - itemSize;
+
+    for (let i = 0; i < count; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("floating_heart");
+
+        // Random start position within container bounds
+        const startX = Math.random() * maxX;
+        const startY = Math.random() * maxY;
+        heart.style.left = startX + "px";
+        heart.style.top = startY + "px";
+
+        // Randomize movement direction and speed
+        const randomX = (Math.random() - 0.5) * 200; // Range: -100 to 100
+        const randomY = (Math.random() - 0.5) * 200; // Range: -100 to 100
+
+        heart.style.setProperty('--translateX', `${randomX}px`);
+        heart.style.setProperty('--translateY', `${randomY}px`);
+        heart.style.setProperty('--duration', `3 s`);
+
+        container.appendChild(heart);
+
+        // Remove heart after animation ends
+        setTimeout(() => {
+            heart.remove();
+        }, 3 * 1000); 
+    }
+}
+
+
+  
 function handleNo() {
     // Hide the dialogue box
     dialog.style.display = "none";
@@ -400,6 +451,7 @@ function resetGame() {
     // Reset stats
     itemsCollected = 0;
     hitsTaken = 0;
+    dumplingcount = 0;
     itemCountDisplay.textContent = itemsCollected;
     hitCountDisplay.textContent = hitsTaken;
     resetHearts();
@@ -454,7 +506,7 @@ function startGame() {
 
     gameIntervals.push(setInterval(movePlayer, 20));
     gameIntervals.push(setInterval(spawnArrow, 1500));
-    gameIntervals.push(setInterval(spawnItem, 3000));
+    gameIntervals.push(setInterval(spawnItem, 2000));
 }
 
 function pauseGame() {
